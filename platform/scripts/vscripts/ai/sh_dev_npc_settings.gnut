@@ -1,0 +1,165 @@
+global function SetupChangeSurvivalCharacterClass
+global function SetupOverrideSpawnSurvivalCharacter
+global function SetupSurvival
+global function SetupModelSpawner
+global function SetupSurvivalLoot
+global function SetupSurvivalIncapShieldBot
+global function SetupAbilities
+global function SetupWeapons
+
+void function SetupChangeSurvivalCharacterClass()
+{
+// TODO: FIX [Undefined variable "SetupDevFunc"]
+	#if UI
+		array<ItemFlavor> characters = clone GetAllCharacters()
+		characters.sort( int function( ItemFlavor a, ItemFlavor b ) {
+			if ( Localize( ItemFlavor_GetLongName( a ) ) < Localize( ItemFlavor_GetLongName( b ) ) )
+				return -1
+			if ( Localize( ItemFlavor_GetLongName( a ) ) > Localize( ItemFlavor_GetLongName( b ) ) )
+				return 1
+			return 0
+		} )
+		foreach( ItemFlavor character in characters )
+		{
+			SetupDevFunc( Localize( ItemFlavor_GetLongName( character ) ), void function( var unused ) : ( character ) {
+				DEV_RequestSetItemFlavorLoadoutSlot( LocalClientEHI(), Loadout_CharacterClass(), character )
+			} )
+		}
+	#endif
+}
+
+void function SetupOverrideSpawnSurvivalCharacter()
+{
+	#if(UI)
+		SetupDevCommand( Localize("#RandomDefault"), "dev_sur_force_spawn_character random" )
+		SetupDevCommand( Localize("#ShippingOnly"), "dev_sur_force_spawn_character special" )
+		array<ItemFlavor> characters = clone GetAllCharacters()
+		characters.sort( int function( ItemFlavor a, ItemFlavor b ) {
+			if ( Localize( ItemFlavor_GetLongName( a ) ) < Localize( ItemFlavor_GetLongName( b ) ) )
+				return -1
+			if ( Localize( ItemFlavor_GetLongName( a ) ) > Localize( ItemFlavor_GetLongName( b ) ) )
+				return 1
+			return 0
+		} )
+		foreach( ItemFlavor characterClass in characters )
+		{
+			SetupDevCommand( Localize( ItemFlavor_GetLongName( characterClass ) ), "dev_sur_force_spawn_character " + ItemFlavor_GetHumanReadableRef( characterClass ) )
+		}
+	#endif
+}
+
+void function SetupWeapons()
+{
+	#if UI
+	SetupDevCommand( Localize("#WPN_ALTERNATOR_SMG"), "give mp_weapon_alternator_smg" )
+	SetupDevCommand( Localize("#WPN_RE45_AUTOPISTOL"), "give mp_weapon_autopistol" )
+	SetupDevCommand( Localize("#WPN_CHARGE_RIFLE"), "give mp_weapon_defender" )
+	SetupDevCommand( Localize("#WPN_DMR"), "give mp_weapon_dmr" )
+	SetupDevCommand( Localize("#WPN_DOUBLETAKE"), "give mp_weapon_doubletake" )
+	SetupDevCommand( Localize("#WPN_ENERGY_AR"), "give mp_weapon_energy_ar" )
+	SetupDevCommand( Localize("#WPN_ENERGY_SHOTGUN"), "give mp_weapon_energy_shotgun" )
+	SetupDevCommand( Localize("#WPN_ESAW"), "give mp_weapon_esaw" )
+	SetupDevCommand( Localize("#WPN_G2"), "give mp_weapon_g2" )
+	SetupDevCommand( Localize("#WPN_HEMLOK"), "give mp_weapon_hemlok" )
+	SetupDevCommand( Localize("#WPN_LMG"), "give mp_weapon_lmg" )
+	SetupDevCommand( Localize("#WPN_LSTAR"), "give mp_weapon_lstar" )
+	SetupDevCommand( Localize("#WPN_MASTIFF"), "give mp_weapon_mastiff" )
+	SetupDevCommand( Localize("#MDL_Tool"), "give mp_weapon_mdlspawner" )
+	SetupDevCommand( Localize("#WPN_PDW"), "give mp_weapon_pdw" )
+	SetupDevCommand( Localize("#WPN_R97"), "give mp_weapon_r97" )
+	SetupDevCommand( Localize("#WPN_RSPN101"), "give mp_weapon_rspn101" )
+	SetupDevCommand( Localize("#WPN_P2011"), "give mp_weapon_semipistol" )
+	SetupDevCommand( Localize("#WPN_SHOTGUN"), "give mp_weapon_shotgun" )
+	SetupDevCommand( Localize("#WPN_SHOTGUN_PISTOL"), "give mp_weapon_shotgun_pistol" )
+	SetupDevCommand( Localize("#WPN_SNIPER"), "give mp_weapon_sniper" )
+	SetupDevCommand( Localize("#WPN_VINSON"), "give mp_weapon_vinson" )
+	SetupDevCommand( Localize("#WPN_WINGMAN"), "give mp_weapon_wingman" )
+	SetupDevCommand( Localize("#smart_pistol"), "give mp_weapon_smart_pistol" )
+	SetupDevCommand( Localize("#Cube_Map"), "give weapon_cubemap" )
+	SetupDevCommand( Localize("#WPN_THERMITE_GRENADE"), "give mp_weapon_thermite_grenade" )
+	SetupDevCommand( Localize("#WPN_FRAG_GRENADE"), "give mp_weapon_frag_grenade" )
+	SetupDevCommand( Localize("#WPN_ARC_STAR"), "give mp_weapon_grenade_emp" )
+	#endif
+}
+
+void function SetupSurvival()
+{
+	#if UI
+		SetupDevCommand( Localize("#ToggleTrainingCompleted"), "script GP().SetPersistentVar( \"trainingCompleted\", (GP().GetPersistentVarAsInt( \"trainingCompleted\" ) == 0 ? 1 : 0) )" )
+		SetupDevCommand( Localize("#EnableSurvivalDevMode"), "playlist survival_dev" )
+		SetupDevCommand( Localize("#DisableMatchEnding"), "mp_enablematchending 0" )
+		SetupDevCommand( Localize("#DropCarePackageR1"), "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 0, null )" )
+		SetupDevCommand( Localize("#DropCarePackageR2"), "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 1, null )" )
+		SetupDevCommand( Localize("#DropCarePackageR3"), "script thread AirdropForRound( gp()[0].GetOrigin(), gp()[0].GetAngles(), 2, null )" )
+		SetupDevCommand( Localize("#ForceCircleMovement"), "script FlagWait( \"DeathCircleActive\" );script svGlobal.levelEnt.Signal( \"DeathField_ShrinkNow\" );script FlagClear( \"DeathFieldPaused\" )" )
+		SetupDevCommand( Localize("#PauseCircleMovement"), "script FlagSet( \"DeathFieldPaused\" )" )
+		SetupDevCommand( Localize("#UnpauseCircleMovement"), "script FlagClear( \"DeathFieldPaused\" )" )
+		SetupDevCommand( Localize("#GladiatorIntroSequence"), "script thread DEV_StartGladiatorIntroSequence()" )
+		SetupDevCommand( Localize("#BleedoutDebugMode"), "script FlagSet( \"BleedoutDebug\" )" )
+		SetupDevCommand( Localize("#DisableLootDropsOnDeath"), "script FlagSet( \"DisableLootDrops\" )" )
+		SetupDevCommand( Localize("#DropMyDeathBox"), "script thread SURVIVAL_Death_DropLoot_Internal( GP(), null, 100 )" )
+	#endif
+}
+
+
+void function SetupSurvivalLoot( var categories )
+{
+	#if UI
+		RunClientScript( "SetupSurvivalLoot", categories )
+	#endif
+}
+
+void function SetupAbilities()
+{
+	#if UI
+	SetupDevCommand( Localize("#character_bloodhound_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_AREA_SONAR_SCAN"), "give mp_ability_area_sonar_scan" )
+	SetupDevCommand( Localize("#character_bloodhound_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_HUNT_MODE"), "give mp_ability_hunt_mode" )
+	SetupDevCommand( Localize("#character_lifeline_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_DEPLOYABLE_MEDIC"), "give mp_weapon_deployable_medic" )
+	SetupDevCommand( Localize("#character_lifeline_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_CARE_PACKAGE"), "give mp_ability_care_package" )
+	SetupDevCommand( Localize("#character_pathfinder_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_GRAPPLE"), "give mp_ability_grapple" )
+	SetupDevCommand( Localize("#character_pathfinder_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_ZIPLINE"), "give mp_weapon_zipline" )
+	SetupDevCommand( Localize("#character_octane_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_OCTANE_STIM"), "give mp_ability_heal" )
+	SetupDevCommand( Localize("#character_octane_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_JUMP_PAD"), "give mp_weapon_jump_pad" )
+	SetupDevCommand( Localize("#character_mirage_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_HOLOPILOT"), "give mp_ability_holopilot" )
+	SetupDevCommand( Localize("#character_mirage_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_DISGUISE"), "give mp_ability_mirage_ultimate" )
+	SetupDevCommand( Localize("#character_crypto_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_AERIAL_DRONE"), "give mp_ability_crypto_drone" )
+	SetupDevCommand( Localize("#character_crypto_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_DRONE_EMP"), "give mp_ability_crypto_drone_emp" )
+	SetupDevCommand( Localize("#character_wattson_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_TESLA_TRAP"), "give mp_weapon_tesla_trap" )
+	SetupDevCommand( Localize("#character_wattson_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_TROPHY_SYSTEM"), "give mp_weapon_trophy_defense_system"  )
+	SetupDevCommand( Localize("#character_wraith_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_PHASE_WALK"), "give mp_ability_phase_walk" )
+	SetupDevCommand( Localize("#character_wraith_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_PHASE_GATE"), "give mp_weapon_phase_tunnel" )
+	SetupDevCommand( Localize("#character_gibraltar_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_BUBBLE_BUNKER"), "give mp_weapon_bubble_bunker" )
+	SetupDevCommand( Localize("#character_gibraltar_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_DEFENSIVE_BOMBARDMENT"), "give mp_weapon_grenade_defensive_bombardment" )
+	SetupDevCommand( Localize("#character_bangalore_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_GRENADE_BANGALORE"), "give mp_weapon_grenade_bangalore" )
+	SetupDevCommand( Localize("#character_bangalore_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_CREEPING_BOMBARDMENT"), "give mp_weapon_grenade_creeping_bombardment" )
+	SetupDevCommand( Localize("#character_caustic_NAME")+" "+Localize("#TACTICAL")+":"+Localize("#WPN_DIRTY_BOMB"), "give mp_weapon_dirty_bomb" )
+	SetupDevCommand( Localize("#character_caustic_NAME")+" "+Localize("#ULTIMATE")+":"+Localize("#WPN_GRENADE_GAS"), "give mp_weapon_grenade_gas" )
+	SetupDevCommand( Localize("#3Dash_Tactical"), "give mp_ability_3dash" )
+	SetupDevCommand( Localize("#Pulse_Blade"), "give mp_weapon_grenade_sonar" )
+	SetupDevCommand( Localize("#Amped_Wall"), "give mp_weapon_deployable_cover" )
+	SetupDevCommand( Localize("#Electric_Smoke"), "give mp_weapon_grenade_electric_smoke" )
+	#endif
+}
+
+
+void function SetupModelSpawner()
+{
+	#if UI
+	SetupDevCommand( Localize("#Marvin"), "SetMDLSpawnerModel mdl/robots/marvin/marvin_gladcard.rmdl" )
+	SetupDevCommand( Localize("#Drop_Pod_Loot"), "SetMDLSpawnerModel mdl/vehicle/droppod_loot/droppod_loot_LL_holo.rmdl" )
+	SetupDevCommand( Localize("#Death_Box"), "SetMDLSpawnerModel mdl/props/death_box/death_box_01.rmdl" )
+	SetupDevCommand( Localize("#Drone_Frag"), "SetMDLSpawnerModel mdl/robots/drone_frag/drone_frag.rmdl" )
+	SetupDevCommand( Localize("#Drop_Pod_FireTeam"), "SetMDLSpawnerModel mdl/vehicle/droppod_fireteam/droppod_fireteam.rmdl" )
+	#endif
+}
+
+void function SetupSurvivalIncapShieldBot()
+{
+	#if UI
+	SetupDevCommand( Localize("#SpawnBotWithLv1"), "script Dev_SpawnBotWithIncapShieldToView( 1 )" )
+	SetupDevCommand( Localize("#SpawnBotWithLv2"), "script Dev_SpawnBotWithIncapShieldToView( 2 )" )
+	SetupDevCommand( Localize("#SpawnBotWithLv3"), "script Dev_SpawnBotWithIncapShieldToView( 3 )" )
+	SetupDevCommand( Localize("#SpawnBotWithLv4"), "script Dev_SpawnBotWithIncapShieldToView( 4 )" )
+	SetupDevCommand( Localize("#SpawnBotWithRandom"), "script Dev_SpawnBotWithIncapShieldToView( -1 )" )
+	#endif
+}
