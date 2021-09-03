@@ -4,7 +4,7 @@ APEX S3 Auto Localize Developer Menu
 
 Chinese and English is finished.Other language default is that English.
 
-Language text change:
+How to change own Language text:
 
 
 1.Download and cover the file;
